@@ -38,6 +38,14 @@ class Login
             $this->dologinWithPostData();
         }
     }
+    private function redirect($v_url, $v_permanent = false){
+        if ($v_permanent){
+          header("HTTP/1.1 301 Moved Permanently");
+        }
+        echo 'Redirecting..';
+        header("Location: ".$v_url);
+        exit;
+      } // redirect()
 
     /**
      * log in with post data
@@ -86,6 +94,8 @@ class Login
                         $_SESSION['user_name'] = $result_row->user_name;
                         //$_SESSION['user_email'] = $result_row->user_email;
                         $_SESSION['user_login_status'] = 1;
+                        $authurl = 'http://'.$form['uamip'].':'.$form['uamport'].'/logon?username='.$form['username'].'&response='.$papdata['response'].'&userurl='.$form['userurl'];
+                        redirect($auth_url);
 
                     } else {
                         $this->errors[] = "Wrong password. Try again.";
