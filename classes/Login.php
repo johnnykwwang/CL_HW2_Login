@@ -98,7 +98,7 @@ class Login
                         //$_SESSION['user_email'] = $result_row->user_email;
                         $_SESSION['user_login_status'] = 1;
                         $authurl = 'http://'.$_POST['uamip'].':'.$_POST['uamport'].'/logon?username='.$_POST['user_name'].'&userurl='.$_POST['userurl'];
-                        redirect($auth_url);
+                        $this->redirect($auth_url);
 
                     } else {
                         $this->errors[] = "Wrong password. Try again.";
