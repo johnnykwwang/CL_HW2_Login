@@ -41,14 +41,42 @@ class Login
             $this->dologinWithPostData();
         }
     }
-    private function redirect($v_url, $v_permanent = false){
-        if ($v_permanent){
-          header("HTTP/1.1 301 Moved Permanently");
+    private function attempt_login() {
+        global $uamsecret, $userpassword;
+        
+        echo "<h1>Logging in...</h1>";
+
+        $hexchal = pack ("H32", $_POST['chal']);
+        $newchal = $uamsecret ? pack("H*", md5($hexchal . $uamsecret)) : $hexchal;
+
+        $response = md5("\0" . $_POST['user_password'] . $newchal);
+        
+        $newpwd = pack("a32", $_POST['user_password']);
+        $pappassword = implode ('', unpack("H32", ($newpwd ^ $newchal)));
+        
+        if ((isset ($uamsecret)) && isset($userpassword)) {
+            print implode('', array(
+                '<meta http-equiv="refresh" content="0;url=',
+                'http://', $_POST['uamip'], ':', $_POST['uamport'], '/',
+                'logon?username=', $_POST['username'], '&password=', $pappassword, '">'
+            ));
+        } else {
+            print implode('', array(
+                '<meta http-equiv="refresh" content="0;url=',
+                'http://', $_POST['uamip'], ':', $_POST['uamport'], '/',
+                'logon?username=', $_POST['username'], '&response=', $response,
+                '&userurl=', $_POST['userurl'], '">'
+            ));
         }
-        echo 'Redirecting..';
-        header("Location: ".$v_url);
-        exit;
-      } // redirect()
+    }
+    /* private function redirect($v_url, $v_permanent = false){ */
+    /*     if ($v_permanent){ */
+    /*       header("HTTP/1.1 301 Moved Permanently"); */
+    /*     } */
+    /*     echo 'Redirecting..'; */
+    /*     header("Location: ".$v_url); */
+    /*     exit; */
+    /*   } // redirect() */
 
     /**
      * log in with post data
@@ -97,9 +125,7 @@ class Login
                         $_SESSION['user_name'] = $result_row->user_name;
                         //$_SESSION['user_email'] = $result_row->user_email;
                         $_SESSION['user_login_status'] = 1;
-                        $auth_url = 'http://'.$_POST['uamip'].':'.$_POST['uamport'].'/logon?username='.$_POST['user_name'].'&userurl='.$_POST['userurl'];
-                        $this->redirect($auth_url);
-
+                        $this->attempt_login();
                     } else {
                         $this->errors[] = "Wrong password. Try again.";
                     }
