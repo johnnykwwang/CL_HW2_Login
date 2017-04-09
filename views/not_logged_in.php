@@ -26,9 +26,9 @@ if (isset($login)) {
         <div class="form-group">
           <input id="login_input_password"  type="password" name="user_password" autocomplete="off" placeholder="密碼" class="form-control" required />
         </div>
-        <input type="hidden" name="uamip" value="<?php echo $form['uamip'];?>" />
-        <input type="hidden" name="uamport" value="<?php echo $form['uamport'];?>" />
-        <input type="hidden" name="userurl" value="<?php echo $form['userurl'];?>" />
+        <input type="hidden" name="uamip" value="<?php echo $_GET['uamip'];?>" />
+        <input type="hidden" name="uamport" value="<?php echo $_GET['uamport'];?>" />
+        <input type="hidden" name="userurl" value="<?php echo $_GET['userurl'];?>" />
         <input type="submit" class="btn btn-primary btn-block" name="login" value="登入" />
     </form>
 
